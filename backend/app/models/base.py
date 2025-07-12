@@ -29,7 +29,9 @@ class BaseModel(SQLModel):
 
 
 class TimestampMixin(SQLModel):
-    created_at: datetime = Field(default_factory=datetime.now, description="创建时间")
+    created_at: datetime = Field(
+        default_factory=datetime.now,
+        description="创建时间")
 
 
 class Token(SQLModel):

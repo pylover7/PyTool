@@ -8,7 +8,7 @@ departRouter = APIRouter()
 
 
 @departRouter.post("/add", summary="添加部门")
-async def add_depart(session: SessionDep,  data: DepartCreate):
+async def add_depart(session: SessionDep, data: DepartCreate):
     result = await deptController.create(session, data)
     data = await result.to_dict()
     return Success(msg="部门添加成功！", data=data)

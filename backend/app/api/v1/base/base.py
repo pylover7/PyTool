@@ -29,7 +29,8 @@ router = APIRouter()
 
 
 @router.post("/accessToken", summary="获取token")
-async def login_access_token(session: SessionDep, request: Request, credentials: CredentialsSchema):
+async def login_access_token(
+        session: SessionDep, request: Request, credentials: CredentialsSchema):
     user: User = await userController.authenticate(session=session, credentials=credentials, request=request)
     await userController.update_last_login(session=session, id=user.id.__str__())
     roles = [item.code for item in user.roles]
@@ -38,8 +39,10 @@ async def login_access_token(session: SessionDep, request: Request, credentials:
     except Exception as e:
         logger.debug("获取部门名称失败")
         depart = ""
-    access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
-    refresh_token_expires = timedelta(minutes=settings.REFRESH_TOKEN_EXPIRE_MINUTES)
+    access_token_expires = timedelta(
+        minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
+    refresh_token_expires = timedelta(
+        minutes=settings.REFRESH_TOKEN_EXPIRE_MINUTES)
     expire = datetime.now() + access_token_expires
     expire_refresh = datetime.now() + refresh_token_expires
 
@@ -75,8 +78,10 @@ async def refresh_token(refreshToken: refreshTokenSchema):
         payload = decode_access_token(refreshToken.refreshToken)
     except ExpiredSignatureError:
         return FailAuth(msg="refreshToken已过期")
-    access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
-    refresh_token_expires = timedelta(minutes=settings.REFRESH_TOKEN_EXPIRE_MINUTES)
+    access_token_expires = timedelta(
+        minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
+    refresh_token_expires = timedelta(
+        minutes=settings.REFRESH_TOKEN_EXPIRE_MINUTES)
     expire = datetime.now() + access_token_expires
     expire_refresh = datetime.now() + refresh_token_expires
 
@@ -181,6 +186,7 @@ async def category_all(session: SessionDep):
     result = [await item.to_dict() for item in category_obj]
     return Success(msg="商品分类列表查询成功！", data=result)
 
+
 @router.get("/shopList", summary="获取所有商品")
 async def goods_all(session: SessionDep, categoryId: str | None = None):
     goods_objs = await goodsController.all(session, categoryId)
@@ -188,12 +194,14 @@ async def goods_all(session: SessionDep, categoryId: str | None = None):
     for item in goods_objs:
         card_objs = item.card
         cardCount = len([card for card in card_objs if card.status == 1])
-        couponCount = len([coupon for coupon in item.coupon if coupon.status != 0])
+        couponCount = len(
+            [coupon for coupon in item.coupon if coupon.status != 0])
         goods = await item.to_dict()
         goods["cardCount"] = cardCount
         goods["couponCount"] = couponCount
         result.append(goods)
     return Success(msg="商品列表查询成功！", data=result)
+
 
 @router.get("/checkCoupon", summary="校验优惠券")
 async def check_coupon(session: SessionDep, code: str, goods_id: str):
@@ -209,6 +217,7 @@ async def check_coupon(session: SessionDep, code: str, goods_id: str):
     if len(coupon_obj.order) >= coupon_obj.limit:
         return Success(code=201, msg="优惠券已使用完啦！")
     return Success(msg="优惠券校验成功！", data=await coupon_obj.to_dict())
+
 
 @router.post("/notify/{name}", summary="支付回调")
 async def notify(name: str, request: Request, session: SessionDep):
@@ -234,6 +243,7 @@ async def notify(name: str, request: Request, session: SessionDep):
                 return Success(msg="支付成功")
             else:
                 return Fail(msg="支付失败")
+
 
 @router.websocket("/wechat", name="微信支付")
 async def wechat_pay(websocket: WebSocket, session: SessionDep):

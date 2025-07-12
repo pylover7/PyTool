@@ -33,13 +33,15 @@ async def get_login_logs(
             lines = newLines
         if data["loginTime"] is not None and len(data["loginTime"]) > 1:
             lines = [line for line in lines if
-                     convert_utc_to_local_time(data["loginTime"][0], "%Y-%m-%dT%H:%M:%S.%fZ", "UTC")
+                     convert_utc_to_local_time(
+                         data["loginTime"][0], "%Y-%m-%dT%H:%M:%S.%fZ", "UTC")
                      <= convert_utc_to_local_time(line.split("|")[0].strip(), "%Y-%m-%d %H:%M:%S.%f")
                      <= convert_utc_to_local_time(data["loginTime"][1], "%Y-%m-%dT%H:%M:%S.%fZ", "UTC")]
 
         total = len(lines)
         if total == 0:
-            return SuccessExtra(data=logList, total=total, currentPage=currentPage, pageSize=pageSize)
+            return SuccessExtra(data=logList, total=total,
+                                currentPage=currentPage, pageSize=pageSize)
         start_index = total - pageSize * (currentPage - 1)
         end_index = start_index - pageSize
         if end_index < 0:
@@ -59,7 +61,8 @@ async def get_login_logs(
                 "behavior": parts[7].strip(),
             }
             logList.append(log_dict)
-    return SuccessExtra(data=logList, total=total, currentPage=currentPage, pageSize=pageSize)
+    return SuccessExtra(data=logList, total=total,
+                        currentPage=currentPage, pageSize=pageSize)
 
 
 @monitorRouter.get("/clearLoginLogs", summary="清除登录日志")
@@ -69,6 +72,7 @@ async def clear_login_logs(session: SessionDep):
         f.write("")
     logger.operationError(user.username, "清除登录日志")
     return Success(msg="清除成功！")
+
 
 @monitorRouter.post("/getOperationLogs", summary="获取操作日志")
 async def get_operation_logs(
@@ -93,14 +97,17 @@ async def get_operation_logs(
                 elif data["level"] == "0" and "ERROR" in line:
                     newLines.append(line)
             lines = newLines
-        if data["operatingTime"] is not None and len(data["operatingTime"]) > 1:
+        if data["operatingTime"] is not None and len(
+                data["operatingTime"]) > 1:
             lines = [line for line in lines if
-                     convert_utc_to_local_time(data["operatingTime"][0], "%Y-%m-%dT%H:%M:%S.%fZ", "UTC")
+                     convert_utc_to_local_time(
+                         data["operatingTime"][0], "%Y-%m-%dT%H:%M:%S.%fZ", "UTC")
                      <= convert_utc_to_local_time(line.split("|")[0].strip(), "%Y-%m-%d %H:%M:%S.%f")
                      <= convert_utc_to_local_time(data["operatingTime"][1], "%Y-%m-%dT%H:%M:%S.%fZ", "UTC")]
         total = len(lines)
         if total == 0:
-            return SuccessExtra(data=logList, total=total, currentPage=currentPage, pageSize=pageSize)
+            return SuccessExtra(data=logList, total=total,
+                                currentPage=currentPage, pageSize=pageSize)
 
         start_index = total - pageSize * (currentPage - 1)
         end_index = start_index - pageSize
@@ -125,7 +132,8 @@ async def get_operation_logs(
                 "summary": parts[3].strip(),
             }
             logList.append(log_dict)
-    return SuccessExtra(data=logList, total=total, currentPage=currentPage, pageSize=pageSize)
+    return SuccessExtra(data=logList, total=total,
+                        currentPage=currentPage, pageSize=pageSize)
 
 
 @monitorRouter.get("/clearOperationLogs", summary="清除操作日志")
@@ -162,13 +170,15 @@ async def get_system_logs(
         # 对读取的日志先经过username和status，以及startTime和endTime 过滤
         if data["systemTime"] is not None and len(data["systemTime"]) > 1:
             lines = [line for line in lines if
-                     convert_utc_to_local_time(data["systemTime"][0], "%Y-%m-%dT%H:%M:%S.%fZ", "UTC")
+                     convert_utc_to_local_time(
+                         data["systemTime"][0], "%Y-%m-%dT%H:%M:%S.%fZ", "UTC")
                      <= convert_utc_to_local_time(line.split("|")[0].strip(), "%Y-%m-%d %H:%M:%S.%f")
                      <= convert_utc_to_local_time(data["systemTime"][1], "%Y-%m-%dT%H:%M:%S.%fZ", "UTC")]
 
         total = len(lines)
         if total == 0:
-            return SuccessExtra(data=logList, total=total, currentPage=currentPage, pageSize=pageSize)
+            return SuccessExtra(data=logList, total=total,
+                                currentPage=currentPage, pageSize=pageSize)
 
         start_index = total - pageSize * (currentPage - 1)
         end_index = start_index - pageSize
@@ -194,7 +204,8 @@ async def get_system_logs(
                 "message": parts[2].strip(),
             }
             logList.append(log_dict)
-    return SuccessExtra(data=logList, total=total, currentPage=currentPage, pageSize=pageSize)
+    return SuccessExtra(data=logList, total=total,
+                        currentPage=currentPage, pageSize=pageSize)
 
 
 @monitorRouter.get("/clearSystemLogs", summary="清除系统日志")

@@ -16,11 +16,13 @@ class Api(BaseModel, TimestampMixin, table=True):
     summary: str = Field(max_length=500, description="请求简介")
     tags: str = Field(max_length=100, description="API标签")
 
-    roles: list["Role"] = Relationship(back_populates="apis", link_model=RoleApiLink)
+    roles: list["Role"] = Relationship(
+        back_populates="apis", link_model=RoleApiLink)
 
 
 class ApiCreate:
     pass
+
 
 class ApiUpdate:
     pass

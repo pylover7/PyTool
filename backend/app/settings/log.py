@@ -5,7 +5,8 @@ from loguru import logger as loguru_logger
 
 loginLogs = Path(__file__).parent.parent.parent.joinpath("logs", "login.log")
 systemLogs = Path(__file__).parent.parent.parent.joinpath("logs", "system.log")
-operationLogs = Path(__file__).parent.parent.parent.joinpath("logs", "operation.log")
+operationLogs = Path(__file__).parent.parent.parent.joinpath(
+    "logs", "operation.log")
 
 
 class Logger:
@@ -26,8 +27,7 @@ class Logger:
             retention="10 days",
             compression="zip",
             format="<green>{time:YYYY-MM-DD HH:mm:ss.SSS}</green> | <level>{level: <8}</level> | <level>{message}</level>",
-            filter=lambda record: record["extra"].get("name") == "system"
-        )
+            filter=lambda record: record["extra"].get("name") == "system")
         self.logger.add(
             sink=loginLogs,
             level="SUCCESS",
@@ -47,8 +47,7 @@ class Logger:
             retention="10 days",
             compression="zip",
             format="<green>{time:YYYY-MM-DD HH:mm:ss.SSS}</green> | <level>{level: <8}</level> | {extra[user]} | <level>{message}</level>",
-            filter=lambda record: record["extra"].get("name") == "operation"
-        )
+            filter=lambda record: record["extra"].get("name") == "operation")
         self.sysLogger = self.logger.bind(name="system")
         self.loginLogger = self.logger.bind(name="login")
         self.operationLogger = self.logger.bind(name="operation")
@@ -79,7 +78,8 @@ class Logger:
     def success(self, msg):
         self.sysLogger.success(msg)
 
-    def loginSuccess(self, user: str, ip: str, ip_area: str, system: str, browser: str, behavior: int):
+    def loginSuccess(self, user: str, ip: str, ip_area: str,
+                     system: str, browser: str, behavior: int):
         """
         登录成功日志
 
@@ -90,9 +90,16 @@ class Logger:
         :param browser: 浏览器类型
         :param behavior: 登录行为：0：账号/1：微信/2：QQ/3：电话登录 等
         """
-        self.loginLogger.success(self.loginType(behavior), user=user, ip=ip, ip_area=ip_area, system=system, browser=browser)
+        self.loginLogger.success(
+            self.loginType(behavior),
+            user=user,
+            ip=ip,
+            ip_area=ip_area,
+            system=system,
+            browser=browser)
 
-    def loginFail(self, user: str, ip: str, ip_area: str, system: str, browser: str, behavior: int):
+    def loginFail(self, user: str, ip: str, ip_area: str,
+                  system: str, browser: str, behavior: int):
         """
         登录失败日志
         :param user: 用户
@@ -102,7 +109,13 @@ class Logger:
         :param browser: 浏览器类型
         :param behavior: 登录行为：0：账号/1：微信/2：QQ/3：电话登录 等
         """
-        self.loginLogger.error(self.loginType(behavior), user=user, ip=ip, ip_area=ip_area, system=system, browser=browser)
+        self.loginLogger.error(
+            self.loginType(behavior),
+            user=user,
+            ip=ip,
+            ip_area=ip_area,
+            system=system,
+            browser=browser)
 
     def operationInfo(self, user: str, msg: str):
         self.operationLogger.info(msg, user=user)
@@ -113,8 +126,15 @@ class Logger:
     def operationError(self, user: str, msg: str):
         self.operationLogger.error(msg, user=user)
 
+
 logger = Logger()
 
 if __name__ == '__main__':
     logger.operationError("dayezi", "test")
-    logger.loginFail("dayezi", ip="xxx", ip_area="xxx", system="xxx", browser="xxx", behavior=0)
+    logger.loginFail(
+        "dayezi",
+        ip="xxx",
+        ip_area="xxx",
+        system="xxx",
+        browser="xxx",
+        behavior=0)

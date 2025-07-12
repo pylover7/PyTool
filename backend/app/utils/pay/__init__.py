@@ -1,5 +1,6 @@
 from app.settings.config import pay_config
 
+
 def notify_url(name: str):
     """
     生成通知URL
@@ -13,4 +14,3 @@ def notify_url(name: str):
     str: 构建好的通知URL字符串
     """
     return f"{pay_config.get_config('base', 'notify')}/proxy/api/v1/base/notify/{name}"
-

@@ -5,6 +5,7 @@ from app.settings.config import base_config
 
 paySetRouter = APIRouter()
 
+
 @paySetRouter.get("/get/{species}", summary="支付设置获取")
 async def pay_setting(species: str):
     match species:
@@ -27,6 +28,7 @@ async def pay_setting(species: str):
             return Success(data=result)
         case _:
             return Success(msg="获取成功！")
+
 
 @paySetRouter.post("/set/{species}", summary="支付设置更新")
 async def pay_setting(species: str, data: dict):

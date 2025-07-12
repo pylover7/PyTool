@@ -95,7 +95,8 @@ async def list_user(
         obj_dict = await obj.to_dict(exclude_fields=["password"])
         obj_dict["roleIds"] = [item.id.__str__() for item in obj.roles]
         data.append(obj_dict)
-    return SuccessExtra(data=data, total=total, currentPage=currentPage, pageSize=pageSize)
+    return SuccessExtra(data=data, total=total,
+                        currentPage=currentPage, pageSize=pageSize)
 
 
 @userRouter.post("/update", summary="更新用户")
@@ -115,7 +116,13 @@ async def update_avatar(
         data: UserAvatar,
 ):
     user = await userController.get(session, data.id)
-    avatar_name = f"{md5_encrypt(str(user.id))}_{time.time_ns()}.{data.avatar.base64.split(';')[0].split('/')[-1]}"
+    avatar_name = f"{
+        md5_encrypt(
+            str(
+                user.id))}_{
+        time.time_ns()}.{
+                    data.avatar.base64.split(';')[0].split('/')[
+                        -1]}"
     avatar_path = Path.joinpath(Path(settings.AVATAR_PATH), avatar_name)
     with open(avatar_path, "wb") as f:
         imgData = base_decode(data.avatar.base64.split(",")[1])
@@ -157,7 +164,7 @@ async def reset_pwd(
         session: SessionDep,
         data: UserResetPwd,
 ):
-    user = await userController.get(session,data.id)
+    user = await userController.get(session, data.id)
     user.password = get_password_hash(data.newPwd)
     session.add(user)
     session.commit()

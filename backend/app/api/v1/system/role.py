@@ -17,9 +17,11 @@ async def add_role(session: SessionDep, data: RoleCreate):
     result = await role_obj.to_dict()
     return Success(msg="角色添加成功！", data=result)
 
+
 @roleRouter.post("/delete", summary="删除角色")
 async def delete_role(session: SessionDep, data: list[str]):
     await roleController.delete(session, data)
+
 
 @roleRouter.post("/list", summary="获取角色列表")
 async def role_list(
@@ -47,7 +49,9 @@ async def role_list(
         role_dict = await item.to_dict()
         result.append(role_dict)
         role_dict["userCount"] = len(item.users)
-    return SuccessExtra(msg="角色列表查询成功！", data=result, total=total, currentPage=currentPage, pageSize=pageSize)
+    return SuccessExtra(msg="角色列表查询成功！", data=result, total=total,
+                        currentPage=currentPage, pageSize=pageSize)
+
 
 @roleRouter.get("/all", summary="获取所有角色")
 async def role_all(session: SessionDep):
@@ -55,15 +59,18 @@ async def role_all(session: SessionDep):
     result = [await item.to_dict() for item in role_obj]
     return Success(msg="角色列表查询成功！", data=result)
 
+
 @roleRouter.post("/update", summary="修改角色信息")
 async def update_role(session: SessionDep, data: RoleUpdate):
     await roleController.update(session, data.id, data)
     return Success(msg="角色信息修改成功！")
 
+
 @roleRouter.post("/updateStatus", summary="修改角色状态")
 async def update_role_status(session: SessionDep, data: UpdateRoleStatus):
     await roleController.update(session, data.id, data)
     return Success(msg="角色状态修改成功！")
+
 
 @roleRouter.post("/getRoleAuth", summary="获取角色对应菜单列表和api列表")
 async def get_role_auth(session: SessionDep, data: BaseModel):
@@ -73,6 +80,7 @@ async def get_role_auth(session: SessionDep, data: BaseModel):
         "apis": [item.id.__str__() for item in role_obj.apis]
     }
     return Success(msg="角色权限查询成功！", data=result)
+
 
 @roleRouter.post("/updateRoleAuth", summary="修改角色对应菜单列表和api列表")
 async def update_role_auth(session: SessionDep, data: UpdateRoleAuth):

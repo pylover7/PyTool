@@ -10,7 +10,7 @@ class RoleController(CRUDBase[Role, RoleCreate, RoleUpdate]):
     def __init__(self):
         super().__init__(Role)
 
-    async def updateMenus(self, session: Session, id: str,  menuIds: list[str]):
+    async def updateMenus(self, session: Session, id: str, menuIds: list[str]):
         role_obj = await self.get(session, id)
         role_obj.menus.clear()
         for item in menuIds:
@@ -19,7 +19,7 @@ class RoleController(CRUDBase[Role, RoleCreate, RoleUpdate]):
         session.add(role_obj)
         session.commit()
 
-    async def updateApis(self, session: Session, id: str,  apiIds: list[str]):
+    async def updateApis(self, session: Session, id: str, apiIds: list[str]):
         role_obj = await self.get(session, id)
         role_obj.apis.clear()
         for item in apiIds:

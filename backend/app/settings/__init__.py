@@ -59,10 +59,12 @@ class Settings(BaseSettings):
     PROJECT_NAME: str
     PROJECT_DESCRIPTION: str
     VERSION: str
-    STATIC_PATH: str = Path(__file__).parent.parent.parent.joinpath("static").__str__()
+    STATIC_PATH: str = Path(
+        __file__).parent.parent.parent.joinpath("static").__str__()
     AVATAR_PATH: str = Path(STATIC_PATH).joinpath("avatar").__str__()
     GOODS_PATH: str = Path(STATIC_PATH).joinpath("goods").__str__()
-    CONFIG_PATH: str = Path(__file__).parent.parent.parent.joinpath("config").__str__()
+    CONFIG_PATH: str = Path(
+        __file__).parent.parent.parent.joinpath("config").__str__()
 
     SENTRY_DSN: HttpUrl | None = None
     POSTGRES_SERVER: str

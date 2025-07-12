@@ -24,14 +24,17 @@ class UserController(CRUDBase[User, UserCreate, UserUpdate]):
         :return: 用户对象
         """
         db_obj = User.model_validate(
-            user_create, update={"hashed_password": get_password_hash(user_create.password)}
+            user_create, update={
+                "hashed_password": get_password_hash(
+                    user_create.password)}
         )
         session.add(db_obj)
         session.commit()
         session.refresh(db_obj)
         return db_obj
 
-    async def update(self, session: Session, user_id: str, user_in: UserUpdate) -> User | None:
+    async def update(self, session: Session, user_id: str,
+                     user_in: UserUpdate) -> User | None:
         db_user = session.get(User, user_id)
         user_data = user_in.model_dump(exclude_unset=True)
         extra_data = {}
@@ -45,7 +48,8 @@ class UserController(CRUDBase[User, UserCreate, UserUpdate]):
         session.refresh(db_user)
         return db_user
 
-    async def get_user_by_email(self, session: Session, email: str) -> User | None:
+    async def get_user_by_email(
+            self, session: Session, email: str) -> User | None:
         statement = select(User).where(User.email == email)
         session_user = session.exec(statement).first()
         return session_user
@@ -62,7 +66,8 @@ class UserController(CRUDBase[User, UserCreate, UserUpdate]):
         user = session.exec(statement).first()
         return user
 
-    async def authenticate(self, session: Session, credentials: CredentialsSchema, request: Request) -> User | None:
+    async def authenticate(
+            self, session: Session, credentials: CredentialsSchema, request: Request) -> User | None:
         user: User = await self.get_user_by_name(session=session, username=credentials.username)
         sysBro = await getReqSysBro(request=request)
         ip_area = await getIpAddress(request.client.host)
@@ -115,9 +120,5 @@ class UserController(CRUDBase[User, UserCreate, UserUpdate]):
         session.refresh(user)
         return user
 
+
 userController = UserController()
-
-
-
-
-

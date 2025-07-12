@@ -197,7 +197,6 @@ def init_menus(session: Session):
         )
         session.add(payWechat)
 
-
         system = Menu(
             menuType=0,
             title="系统管理",
@@ -239,7 +238,7 @@ def init_menus(session: Session):
             component="system/role/index",
             icon="ri:admin-fill",
             rank=2
-            )
+        )
         systemMenu = Menu(
             parentId=system.id,
             menuType=0,
@@ -312,7 +311,8 @@ async def init_data(app: FastAPI) -> None:
         admin = session.exec(
             select(User).where(User.email == settings.FIRST_SUPERUSER)
         ).first()
-        password = get_password_hash(md5_encrypt(settings.FIRST_SUPERUSER_PASSWORD))
+        password = get_password_hash(
+            md5_encrypt(settings.FIRST_SUPERUSER_PASSWORD))
         if not admin:
             logger.info("创建管理员账户...")
             user_in = UserCreate(
@@ -332,7 +332,9 @@ async def init_data(app: FastAPI) -> None:
         logger.info("初始化菜单...")
         init_menus(session)
         logger.info("启动定时任务...")
-        scheduler.add_job(update_expired_orders, "interval", args=[session], seconds=120)
+        scheduler.add_job(
+            update_expired_orders,
+            "interval",
+            args=[session],
+            seconds=120)
         scheduler.start()
-
-

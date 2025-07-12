@@ -16,5 +16,4 @@ systemRouter.include_router(apiRouter, prefix="/api", tags=["系统接口模块"
 systemRouter.include_router(monitorRouter, prefix="/monitor", tags=["系统监控模块"])
 
 
-
 __all__ = ["systemRouter"]

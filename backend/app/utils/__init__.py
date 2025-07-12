@@ -61,7 +61,8 @@ def generate_password_reset_token(email: str) -> str:
 
 def verify_password_reset_token(token: str) -> str | None:
     try:
-        decoded_token = jwt.decode(token, settings.SECRET_KEY, algorithms=["HS256"])
+        decoded_token = jwt.decode(
+            token, settings.SECRET_KEY, algorithms=["HS256"])
         return str(decoded_token["sub"])
     except InvalidTokenError:
         return None
@@ -146,7 +147,9 @@ async def menuTree(p_menu: dict, menus: list[Menu]) -> dict:
         p_menu["children"][i] = await menuTree(v, menus)
     return p_menu
 
+
 def random_string(length: int, prefix: str = ""):
     letters = string.ascii_letters
-    code = prefix + "-" + "".join(random.choice(letters) for i in range(length))
+    code = prefix + "-" + "".join(random.choice(letters)
+                                  for i in range(length))
     return code

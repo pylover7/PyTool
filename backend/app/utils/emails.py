@@ -29,6 +29,3 @@ def send_email(receiver: str, subject: str, body: str):
     except Exception as e:
         logger.sysLogger.error(f"发送邮件给{receiver}失败：{e}")
         return False
-
-
-
