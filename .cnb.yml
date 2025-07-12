@@ -1,7 +1,10 @@
 $:
   vscode:
     - docker:
-        image: docker.cnb.cool/pylover/docker/python:3.11
+        build:
+          dockerfile: .ide/Dockerfile
+          by:
+           - .vscode/settings.yml
       runner:
         cpus: 4
       services:
