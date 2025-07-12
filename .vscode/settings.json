@@ -127,7 +127,6 @@
     "workbench.iconTheme": "vscode-icons",
     "codingcopilot.welcomeMessage": "never",
     "gitlens.showWelcomeOnInstall": false,
-    "workbench.startupEditor": "none",
     "vue.showWelcomePage": false,
     "editor.fontFamily": "'JetBrains Mono', Consolas, 'Courier New', monospace",
     "editor.fontLigatures": true,
