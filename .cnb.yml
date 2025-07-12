@@ -1,0 +1,12 @@
+$:
+  vscode:
+    - docker:
+        image: docker.cnb.cool/pylover/docker/python:3.11
+      runner:
+        cpus: 4
+      services:
+        - vscode
+        - docker
+      stages:
+        - name: ls
+          script: ls -la
