@@ -51,5 +51,9 @@
         }
     },
     "gitblame.inlineMessageEnabled": true,
-    "gitblame.inlineMessageFormat": "${author.name}, (${time.ago}) · ${commit.summary}"
+    "gitblame.inlineMessageFormat": "${author.name}, (${time.ago}) · ${commit.summary}",
+    "python.analysis.autoImportCompletions": true,
+    "python.linting.enabled": true,
+    "python.linting.lintOnSave": true,
+    "workbench.iconTheme": "vscode-icons",
 }
