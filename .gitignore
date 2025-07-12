@@ -1,3 +1,13 @@
+# backend
+*.pyc
+*.sqlite*
+.venv/
+*/migrations
+*/logs
+*/config
+material-*/
+
+# frontend
 node_modules
 .DS_Store
 dist
@@ -12,6 +22,7 @@ npm-debug.log*
 .pnpm-error.log*
 .pnpm-debug.log
 tests/**/coverage/
+/**/static/
 
 # Editor directories and files
 .idea
