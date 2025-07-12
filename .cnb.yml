@@ -13,3 +13,13 @@ $:
       stages:
         - name: ls
           script: ls -la
+  push:
+    - stages:
+        - name: sync to github
+          imports: https://cnb.cool/pylover/key/-/blob/main/github.yml
+          image: tencentcom/git-sync
+          settings:
+            target_url: https://github.com/pylover7/PyTool.git
+            auth_type: https
+            username: ${GIT_USERNAME}
+            password: ${GIT_ACCESS_TOKEN}
