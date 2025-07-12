@@ -59,4 +59,5 @@
     "codingcopilot.welcomeMessage": "never",
     "gitlens.showWelcomeOnInstall": false,
     "workbench.startupEditor": "none",
+    "vue.showWelcomePage": false,
 }
