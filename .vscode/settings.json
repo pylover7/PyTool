@@ -132,4 +132,8 @@
     "editor.fontLigatures": true,
     "editor.fontSize": 15,
     "editor.fontWeight": "normal",
+    "vsicons.dontShowNewVersionMessage": true,
+    "yaml.schemaStore.enable": false,
+    "yaml.trace.server": "off",
+    "redhat.telemetry.enabled": false
 }
