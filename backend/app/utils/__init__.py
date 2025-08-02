@@ -8,7 +8,7 @@ from datetime import datetime, timedelta, timezone
 
 import emails
 import jwt
-from jwt.exceptions import JWTException
+from jwt.exceptions import InvalidTokenError
 
 from app.models import Menu
 from app.settings import settings
@@ -64,7 +64,7 @@ def verify_password_reset_token(token: str) -> str | None:
         decoded_token = jwt.decode(
             token, settings.SECRET_KEY, algorithms=["HS256"])
         return str(decoded_token["sub"])
-    except JWTException:
+    except InvalidTokenError:
         return None
 
 

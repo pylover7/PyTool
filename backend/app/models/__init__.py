@@ -5,6 +5,3 @@ from .menu import *
 from .department import *
 from .api import *
 from .login import *
-from .goods import *
-from .card import *
-from .order import *

@@ -9,14 +9,12 @@ from jwt.exceptions import ExpiredSignatureError
 from wechatpayv3 import WeChatPayType
 
 from app.controllers.department import deptController
-from app.controllers.goods import goodsController, goodsCouponController, goodsCategoryController
-from app.controllers.order import orderController
 from app.controllers.user import userController
 from app.settings.log import logger
 from app.models.login import CredentialsSchema, JWTPayload, JWTOut, refreshTokenSchema, JWTReOut
 from app.core.ctx import CTX_USER_ID
 from app.core.dependency import DependAuth, SessionDep
-from app.models import Api, Menu, Role, User, UpdatePassword, OrderCreate
+from app.models import Api, Menu, Role, User, UpdatePassword
 from app.models.base import Fail, Success, FailAuth
 from app.settings import settings
 from app.utils import menuTree, now
@@ -178,45 +176,6 @@ async def update_user_password(session: SessionDep, req_in: UpdatePassword):
     session.add(user)
     session.commit()
     return Success(msg="修改成功")
-
-
-@router.get("/allShopCate", summary="获取所有商品分类")
-async def category_all(session: SessionDep):
-    category_obj = await goodsCategoryController.all(session)
-    result = [await item.to_dict() for item in category_obj]
-    return Success(msg="商品分类列表查询成功！", data=result)
-
-
-@router.get("/shopList", summary="获取所有商品")
-async def goods_all(session: SessionDep, categoryId: str | None = None):
-    goods_objs = await goodsController.all(session, categoryId)
-    result = []
-    for item in goods_objs:
-        card_objs = item.card
-        cardCount = len([card for card in card_objs if card.status == 1])
-        couponCount = len(
-            [coupon for coupon in item.coupon if coupon.status != 0])
-        goods = await item.to_dict()
-        goods["cardCount"] = cardCount
-        goods["couponCount"] = couponCount
-        result.append(goods)
-    return Success(msg="商品列表查询成功！", data=result)
-
-
-@router.get("/checkCoupon", summary="校验优惠券")
-async def check_coupon(session: SessionDep, code: str, goods_id: str):
-    coupon_obj = await goodsCouponController.get_by_code(session, code)
-    if not coupon_obj:
-        return Success(code=201, msg="优惠券不存在！")
-    if coupon_obj.goods_id.__str__() != goods_id:
-        return Success(code=201, msg="该商品没有此优惠券！")
-    if coupon_obj.status == 0:
-        return Success(code=201, msg="优惠券已使用！")
-    if coupon_obj.end_time < now(0):
-        return Success(code=201, msg="优惠券已过期！")
-    if len(coupon_obj.order) >= coupon_obj.limit:
-        return Success(code=201, msg="优惠券已使用完啦！")
-    return Success(msg="优惠券校验成功！", data=await coupon_obj.to_dict())
 
 
 @router.post("/notify/{name}", summary="支付回调")
