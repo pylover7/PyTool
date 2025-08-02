@@ -117,6 +117,20 @@
                 "-c",
                 "zsh /workspace/lint.sh && zsh"
                 ],
+        },
+        "前端启动":{
+          "path": "/bin/zsh",
+          "args": [
+            "-c",
+            "cd /workspace/frontend && bun dev"
+          ]
+        },
+        "后端启动": {
+          "path": "/bin/zsh",
+          "args": [
+            "-c",
+            "cd /workspace/backend && uv run main.py"
+          ]
         }
     },
     "gitblame.inlineMessageEnabled": true,
