@@ -7,10 +7,10 @@ start_time=$(date +%s)
 echo "脚本开始执行时间: $(date -d @$start_time '+%Y-%m-%d %H:%M:%S')"
 
 # 执行Docker构建
-docker build -t ${CNB_DOCKER_REGISTRY}/${CNB_REPO_SLUG_LOWERCASE}:latest . -f .ide/Dockerfile
+docker build -t ${CNB_DOCKER_REGISTRY}/${CNB_REPO_SLUG_LOWERCASE}:env . -f .ide/Dockerfile
 
 # 执行Docker推送
-docker push ${CNB_DOCKER_REGISTRY}/${CNB_REPO_SLUG_LOWERCASE}:latest
+docker push ${CNB_DOCKER_REGISTRY}/${CNB_REPO_SLUG_LOWERCASE}:env
 
 # 记录脚本结束时间
 end_time=$(date +%s)
