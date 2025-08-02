@@ -3,4 +3,3 @@ workspace:
     button:
       name: 工具箱
       description: 开启！！！
-    autoOpenWebIDE: true
