@@ -21,7 +21,7 @@ from app.utils import menuTree, now
 from app.utils.jwtt import create_access_token, decode_access_token
 from app.utils.password import get_password_hash, verify_password
 from app.utils.pay import notify_url
-from app.utils.pay.wechat import wxpay
+# from app.utils.pay.wechat import wxpay
 
 router = APIRouter()
 
@@ -178,71 +178,71 @@ async def update_user_password(session: SessionDep, req_in: UpdatePassword):
     return Success(msg="修改成功")
 
 
-@router.post("/notify/{name}", summary="支付回调")
-async def notify(name: str, request: Request, session: SessionDep):
-    match name:
-        case "wechat":
-            result = wxpay.callback(headers=request.headers, body=await request.body())
-            if result and result.get('event_type') == 'TRANSACTION.SUCCESS':
-                resource = result.get('resource')
-                out_trade_no = resource.get('out_trade_no')
-                # appid = resource.get('appid')
-                # mchid = resource.get('mchid')
-                # transaction_id = resource.get('transaction_id')
-                # trade_type = resource.get('trade_type')
-                # trade_state = resource.get('trade_state')
-                # trade_state_desc = resource.get('trade_state_desc')
-                # bank_type = resource.get('bank_type')
-                # attach = resource.get('attach')
-                # success_time = resource.get('success_time')
-                # payer = resource.get('payer')
-                # amount = resource.get('amount').get('total')
-                await orderController.complete(session, out_trade_no)
+# @router.post("/notify/{name}", summary="支付回调")
+# async def notify(name: str, request: Request, session: SessionDep):
+#     match name:
+#         case "wechat":
+#             result = wxpay.callback(headers=request.headers, body=await request.body())
+#             if result and result.get('event_type') == 'TRANSACTION.SUCCESS':
+#                 resource = result.get('resource')
+#                 out_trade_no = resource.get('out_trade_no')
+#                 # appid = resource.get('appid')
+#                 # mchid = resource.get('mchid')
+#                 # transaction_id = resource.get('transaction_id')
+#                 # trade_type = resource.get('trade_type')
+#                 # trade_state = resource.get('trade_state')
+#                 # trade_state_desc = resource.get('trade_state_desc')
+#                 # bank_type = resource.get('bank_type')
+#                 # attach = resource.get('attach')
+#                 # success_time = resource.get('success_time')
+#                 # payer = resource.get('payer')
+#                 # amount = resource.get('amount').get('total')
+#                 await orderController.complete(session, out_trade_no)
 
-                return Success(msg="支付成功")
-            else:
-                return Fail(msg="支付失败")
+#                 return Success(msg="支付成功")
+#             else:
+#                 return Fail(msg="支付失败")
 
 
-@router.websocket("/wechat", name="微信支付")
-async def wechat_pay(websocket: WebSocket, session: SessionDep):
-    await websocket.accept()
-    order_code = uuid4().__str__().replace("-", "")[:10] + "-" + now(3)
-    try:
-        while True:
-            data = await websocket.receive_json()
-            # 检查是否有新的消息
-            if data.get("type") == "heartbeat":
-                logger.debug("心跳中...")
-                continue
-            else:
-                # 处理普通信息
-                data["code"] = order_code
-                obj_in = OrderCreate.model_validate(data)
-                order_obj = await orderController.get(session, data["id"])
-                if order_obj is None:
-                    order_obj = await orderController.create(session, obj_in)
-                    code_url, message = wxpay.pay(
-                        description=order_obj.goods.name,
-                        out_trade_no=order_code,
-                        amount={"total": order_obj.amount},
-                        pay_type=WeChatPayType.NATIVE,
-                        notify_url=notify_url("wechat"),
-                    )
-                    code_url = json.loads(message)["code_url"]
-                    result = await order_obj.to_dict()
-                    coupon = {"code": ""}
-                    result["coupon"] = coupon
-                else:
-                    session.refresh(order_obj)
-                    result = await order_obj.to_dict()
-                    code_url = data["code_url"]
-                result["code_url"] = code_url
-                await websocket.send_json(result)
+# @router.websocket("/wechat", name="微信支付")
+# async def wechat_pay(websocket: WebSocket, session: SessionDep):
+#     await websocket.accept()
+#     order_code = uuid4().__str__().replace("-", "")[:10] + "-" + now(3)
+#     try:
+#         while True:
+#             data = await websocket.receive_json()
+#             # 检查是否有新的消息
+#             if data.get("type") == "heartbeat":
+#                 logger.debug("心跳中...")
+#                 continue
+#             else:
+#                 # 处理普通信息
+#                 data["code"] = order_code
+#                 obj_in = OrderCreate.model_validate(data)
+#                 order_obj = await orderController.get(session, data["id"])
+#                 if order_obj is None:
+#                     order_obj = await orderController.create(session, obj_in)
+#                     code_url, message = wxpay.pay(
+#                         description=order_obj.goods.name,
+#                         out_trade_no=order_code,
+#                         amount={"total": order_obj.amount},
+#                         pay_type=WeChatPayType.NATIVE,
+#                         notify_url=notify_url("wechat"),
+#                     )
+#                     code_url = json.loads(message)["code_url"]
+#                     result = await order_obj.to_dict()
+#                     coupon = {"code": ""}
+#                     result["coupon"] = coupon
+#                 else:
+#                     session.refresh(order_obj)
+#                     result = await order_obj.to_dict()
+#                     code_url = data["code_url"]
+#                 result["code_url"] = code_url
+#                 await websocket.send_json(result)
 
-    except Exception as e:
-        logger.debug(e)
-        if websocket.client_state == WebSocketState.DISCONNECTED:
-            logger.debug("客户端已断开连接")
-        else:
-            await websocket.close()
+#     except Exception as e:
+#         logger.debug(e)
+#         if websocket.client_state == WebSocketState.DISCONNECTED:
+#             logger.debug("客户端已断开连接")
+#         else:
+#             await websocket.close()
