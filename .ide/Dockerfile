@@ -56,6 +56,8 @@ RUN curl -fsSL https://code-server.dev/install.sh | sh \
     && code-server --install-extension Vue.volar \
     && code-server --install-extension redjue.git-commit-plugin \
     && code-server --install-extension aaron-bond.better-comments \
+    && code-server --install-extension mtxr.sqltools \
+    && code-server --install-extension mtxr.sqltools-driver-sqlite \
     && echo done
 
 # 复制 vscode 自定义到容器中
