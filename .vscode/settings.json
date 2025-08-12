@@ -150,5 +150,15 @@
     "yaml.schemaStore.enable": false,
     "yaml.trace.server": "off",
     "redhat.telemetry.enabled": false,
-    "github.copilot.enable": false
+    "github.copilot.enable": false,
+    "sqltools.connections": [
+      {
+        "previewLimit": 50,
+        "driver": "SQLite",
+        "name": "test",
+        "group": "test",
+        "database": "${workspaceFolder:workspace}/backend/pytool.sqlite"
+      }
+    ],
+    "sqltools.useNodeRuntime": true
 }
