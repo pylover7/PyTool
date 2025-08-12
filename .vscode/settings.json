@@ -157,7 +157,7 @@
         "driver": "SQLite",
         "name": "test",
         "group": "test",
-        "database": "${workspaceFolder:workspace}/backend/pytool.sqlite"
+        "database": "${workspaceFolder:workspace}/backend/app/static/pytool.sqlite"
       }
     ],
     "sqltools.useNodeRuntime": true

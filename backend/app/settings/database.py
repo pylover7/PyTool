@@ -10,7 +10,7 @@ from pathlib import Path
 def db_engine(scheme: str = "sqlite", username: str = "", password: str = "", host: str = "", port: int = 5432, path: str = "") -> str:
     match scheme:
         case "sqlite":
-            return f"sqlite:////{Path(__file__).parent.parent.parent.joinpath("pytool.sqlite")}"
+            return f"sqlite:////{Path(__file__).parent.parent.joinpath("static", "pytool.sqlite")}"
         case "postgresql":
             return MultiHostUrl.build(
                 scheme="postgresql+psycopg2", 

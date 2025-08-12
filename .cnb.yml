@@ -3,9 +3,9 @@ $:
     - docker:
         image: ${CNB_DOCKER_REGISTRY}/${CNB_REPO_SLUG_LOWERCASE}:env
         volumes:
-            - ./backend/.venv:read-write
-            - ./backend/pytool.sqlite:rw
-            - ./frontend/node_modules:read-write
+            - ./backend/.venv:rw
+            - ./backend/app/static:rw
+            - ./frontend/node_modules:rw
       runner:
         cpus: 8
       services:

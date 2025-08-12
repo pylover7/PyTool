@@ -60,6 +60,8 @@ RUN curl -fsSL https://code-server.dev/install.sh | sh \
     && code-server --install-extension mtxr.sqltools-driver-sqlite \
     && echo done
 
+# 安装数据库插件的依赖
+RUN bun install sqlite3
 # 复制 vscode 自定义到容器中
 COPY .vscode/settings.json /root/.vscode-server/data/Machine/settings.json
 COPY .vscode/settings.json /root/.local/share/code-server/Machine/settings.json
