@@ -1,22 +1,31 @@
 from pydantic import (
-    AnyUrl,
-    BeforeValidator,
-    HttpUrl,
     PostgresDsn,
     MySQLDsn,
-    computed_field,
-    model_validator,
 )
 from pydantic_core import MultiHostUrl
 from typing import Optional
+from pathlib import Path
 
 
-def db_engine(scheme: str, username: str = "", password: str = "", host: str = "", port: int = 5432, path: str = "") -> Optional[PostgresDsn, MySQLDsn]:
-      return MultiHostUrl.build(
-          scheme="postgresql+psycopg",
-          username=self.POSTGRES_USER,
-          password=self.POSTGRES_PASSWORD,
-          host=self.POSTGRES_SERVER,
-          port=self.POSTGRES_PORT,
-          path=self.POSTGRES_DB,
-      )
+def db_engine(scheme: str = "sqlite", username: str = "", password: str = "", host: str = "", port: int = 5432, path: str = "") -> str:
+    match scheme:
+        case "sqlite":
+            return f"sqlite:////{Path(__file__).parent.parent.joinpath("pytool.sqlite")}"
+        case "postgresql":
+            return MultiHostUrl.build(
+                scheme="postgresql+psycopg2", 
+                username=username, 
+                password=password, 
+                host=host, 
+                port=port, 
+                path=path
+            ).__str__()
+        case "mysql":
+            return MultiHostUrl.build(
+                scheme="mysql+pymysql", 
+                username=username, 
+                password=password, 
+                host=host, 
+                port=port, 
+                path=path
+            ).__str__()

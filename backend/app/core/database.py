@@ -9,7 +9,7 @@ from app.settings.log import logger
 from app.utils.password import get_password_hash, md5_encrypt
 from app.utils.staticFileUtils import check_dir_exists
 
-engine = create_engine(str(settings.SQLALCHEMY_DATABASE_URI))
+engine = create_engine(settings.SQLALCHEMY_DATABASE_URI)
 scheduler = AsyncIOScheduler()
 
 
