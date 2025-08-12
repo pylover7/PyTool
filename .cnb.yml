@@ -24,3 +24,16 @@ $:
             auth_type: https
             username: ${GIT_USERNAME}
             password: ${GIT_ACCESS_TOKEN}
+
+  web_trigger_one:
+  - services:
+      - docker
+    env:
+      IMAGE_TAG: ${CNB_DOCKER_REGISTRY}/${CNB_REPO_SLUG_LOWERCASE}:env
+    stages:
+      - name: docker build
+        script: docker build -t ${IMAGE_TAG} . -f .ide/Dockerfile
+      - name: docker list
+        script: docker images
+      - name: docker push
+        script: docker push ${IMAGE_TAG}
