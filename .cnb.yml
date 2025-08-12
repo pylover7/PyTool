@@ -4,6 +4,7 @@ $:
         image: ${CNB_DOCKER_REGISTRY}/${CNB_REPO_SLUG_LOWERCASE}:env
         volumes:
             - ./backend/.venv:read-write
+            - ./backend/pytool.sqlite:rw
             - ./frontend/node_modules:read-write
       runner:
         cpus: 8
