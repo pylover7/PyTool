@@ -13,7 +13,8 @@ RUN apt install -y gnupg && \
     apt update && apt install -y nodejs
 
 # 安装 bun
-RUN curl -fsSL https://bun.sh/install | bash && . /root/.bashrc
+RUN curl -fsSL https://bun.sh/install | bash && . /root/.bashrc && \
+    bun install -g sqlite3
 
 # 安装一些常用的工具
 RUN apt-get update && \
@@ -60,8 +61,6 @@ RUN curl -fsSL https://code-server.dev/install.sh | sh \
     && code-server --install-extension mtxr.sqltools-driver-sqlite \
     && echo done
 
-# 安装数据库插件的依赖
-RUN bun install -g sqlite3
 # 复制 vscode 自定义到容器中
 COPY .vscode/settings.json /root/.vscode-server/data/Machine/settings.json
 COPY .vscode/settings.json /root/.local/share/code-server/Machine/settings.json
@@ -83,5 +82,5 @@ ENV CNB_WELCOME_EXECUTE_COMMAND="zsh"
 RUN rm -rf ~/.cache/uv && rm -rf ~/.cache/pip
 
 # 指定字符集支持命令行输入中文（根据需要选择字符集）
-ENV LANG C.UTF-8
-ENV LANGUAGE C.UTF-8
+ENV LANG=C.UTF-8
+ENV LANGUAGE=C.UTF-8
