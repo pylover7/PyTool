@@ -1,18 +1,34 @@
 $:
   vscode:
     - docker:
-        build:
-          dockerfile: .ide/Dockerfile
-          by:
-           - .vscode/settings.yml
+        image: ${CNB_DOCKER_REGISTRY}/${CNB_REPO_SLUG_LOWERCASE}:env
+        volumes:
+            - ./backend/.venv:rw
+            - ./backend/app/static:rw
+            - ./frontend/node_modules:rw
       runner:
-        cpus: 4
+        cpus: 8
       services:
         - vscode
         - docker
       stages:
         - name: ls
           script: ls -la
+
+  web_trigger_one:
+    - services:
+        - docker
+      env:
+        IMAGE_TAG: ${CNB_DOCKER_REGISTRY}/${CNB_REPO_SLUG_LOWERCASE}:env
+      stages:
+        - name: docker build
+          script: docker build -t ${IMAGE_TAG} . -f .ide/Dockerfile
+        - name: docker list
+          script: docker images
+        - name: docker push
+          script: docker push ${IMAGE_TAG}
+
+main:
   push:
     - stages:
         - name: sync to github

@@ -1,0 +1,98 @@
+[project]
+name = "PyTool"
+version = "0.0.1"
+description = "A tool made by Python"
+readme = "../README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "apscheduler>=3.11.0",
+    "bcrypt==4.0.1",
+    "email-validator>=2.2.0",
+    "emails>=0.6",
+    "fastapi>=0.116.1",
+    "httpx>=0.28.1",
+    "loguru>=0.7.3",
+    "passlib>=1.7.4",
+    "psycopg>=3.2.9",
+    "pydantic-settings>=2.10.1",
+    "pyjwt>=2.10.1",
+    "pymysql>=1.1.1",
+    "pytz>=2025.2",
+    "sentry-sdk>=2.34.1",
+    "setuptools>=80.9.0",
+    "sqlmodel>=0.0.24",
+    "uvicorn>=0.35.0",
+    "wechatpayv3>=2.0.1",
+]
+
+[[tool.uv.index]]
+url = "https://mirrors.cloud.tencent.com/pypi/simple"
+default = true
+
+[dependency-groups]
+dev = [
+    "autopep8>=2.3.2",
+    "pylint>=3.3.7",
+]
+
+[tool.autopep8]
+max-line-length = 120
+aggressive = 2
+recursive = true
+in-place = true
+exclude = "tests/*,migrations/*"
+ignore = "E226,E24,E501,W503"
+select = "E,W"
+
+[tool.pylint]
+# 文件和目录控制
+ignore = ["tests/*", "migrations/*", "**/__pycache__/*"]  # 忽略测试、迁移和缓存
+ignore-patterns = ["_test.py$", "_mock.py$"]             # 忽略测试模式文件
+
+# 通用规则控制
+disable = """
+    C0114, C0115,
+    R0903,
+    W1203,
+    E0213,
+    W0221,
+    E0611
+"""
+
+# 代码质量强化
+enable = """
+    consider-using-f-string,
+    unused-import,
+    inconsistent-return-statements,
+    consider-using-with
+"""
+
+# 允许FastAPI路由函数的参数名（如`db: Session`）
+good-names = """
+    db, session, request, response, app, 
+    client, user_id, item_id
+"""
+
+[tool.pylint.messages_control]
+disable = """
+    invalid-name,
+    too-few-public-methods,
+    broad-except,
+    duplicate-code
+"""
+
+# 格式和设计
+[tool.pylint.format]
+max-line-length = 120    # 与autopep8一致
+max-module-lines = 1500  # 单文件最大行数（避免过长）
+max-args = 6             # 函数最多参数数
+max-locals = 15          # 函数内局部变量数限制
+
+[tool.pylint.design]
+max-attributes = 15      # 类最大属性数
+min-public-methods = 1   # 类最少公共方法数
+
+# 类型提示增强
+[tool.pylint.typecheck]
+recommended = true
+ignore-missing-imports = false  # 强制类型导入检查

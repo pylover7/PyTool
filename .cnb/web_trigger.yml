@@ -1,0 +1,5 @@
+branch:
+  - buttons:
+    - name: 构建 PyTool 环境镜像
+      description: 重新构建 PyTool 环境镜像
+      event: web_trigger_one

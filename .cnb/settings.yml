@@ -1,6 +1,5 @@
 workspace:
   launch:
     button:
-      name: 启动云原生开发
-      description: 点击此按钮启动云原生开发环境
-    autoOpenWebIDE: true
+      name: 工具箱
+      description: 开启！！！

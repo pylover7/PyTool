@@ -1,0 +1,179 @@
+import secrets
+import warnings
+from pathlib import Path
+from typing import Annotated, Any, Literal
+
+from pydantic import (
+    AnyUrl,
+    BeforeValidator,
+    HttpUrl,
+    PostgresDsn,
+    computed_field,
+    model_validator,
+)
+from pydantic_core import MultiHostUrl
+from pydantic_settings import BaseSettings, SettingsConfigDict
+from typing_extensions import Self
+
+from app.settings.database import db_engine
+
+
+def parse_cors(v: Any) -> list[str] | str:
+    if isinstance(v, str) and not v.startswith("["):
+        return [i.strip() for i in v.split(",")]
+    elif isinstance(v, list | str):
+        return v
+    raise ValueError(v)
+
+
+class Settings(BaseSettings):
+    model_config = SettingsConfigDict(
+        env_file_encoding="utf-8",
+        env_file=["../.env"],
+        env_ignore_empty=True,
+        extra="ignore"
+    )
+    API_V1_STR: str = "/api/v1"
+    SECRET_KEY: str = secrets.token_urlsafe(32)
+    # 60 minutes * 24 hours * 8 days = 8 days
+    JWT_ALGORITHM: str = "HS256"
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 2
+    REFRESH_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 2
+    FRONTEND_HOST: str = "http://localhost:5173"
+    HOST: str = "0.0.0.0"
+    PORT: int = 7000
+    RELOAD: bool = False
+    DEBUG: bool = False
+    ENVIRONMENT: Literal["local", "staging", "production"] = "local"
+    DATETIME_FORMAT: str = "%Y-%m-%d %H:%M:%S"
+
+    BACKEND_CORS_ORIGINS: Annotated[
+        list[AnyUrl] | str, BeforeValidator(parse_cors)
+    ] = []
+
+    @computed_field  # type: ignore[prop-decorator]
+    @property
+    def all_cors_origins(self) -> list[str]:
+        return [str(origin).rstrip("/") for origin in self.BACKEND_CORS_ORIGINS] + [
+            self.FRONTEND_HOST
+        ]
+
+    PROJECT_NAME: str
+    PROJECT_DESCRIPTION: str
+    VERSION: str
+    STATIC_PATH: str = Path(
+        __file__).parent.parent.parent.joinpath("static").__str__()
+    AVATAR_PATH: str = Path(STATIC_PATH).joinpath("avatar").__str__()
+    GOODS_PATH: str = Path(STATIC_PATH).joinpath("goods").__str__()
+    CONFIG_PATH: str = Path(
+        __file__).parent.parent.parent.joinpath("config").__str__()
+
+    SENTRY_DSN: HttpUrl | None = None
+    DB_SCHEME: str = "sqlite"
+    DB_SERVER: str = "localhost"
+    DB_PORT: int = 5432
+    DB_USER: str = "postgres"
+    DB_PASSWORD: str = "test"
+    DB_PATH: str = "pytool.sqlite"
+
+    @computed_field  # type: ignore[prop-decorator]
+    @property
+    def SQLALCHEMY_DATABASE_URI(self) -> str:
+        return db_engine(self.DB_SCHEME, self.DB_USER, self.DB_PASSWORD, self.DB_SERVER, self.DB_PORT, self.DB_PATH)
+
+    SMTP_TLS: bool = True
+    SMTP_SSL: bool = False
+    SMTP_PORT: int = 587
+    SMTP_HOST: str | None = None
+    SMTP_USER: str | None = None
+    SMTP_PASSWORD: str | None = None
+    EMAILS_FROM_EMAIL: str | None = None
+    EMAILS_FROM_NAME: str | None = None
+
+    @model_validator(mode="after")
+    def _set_default_emails_from(self) -> Self:
+        if not self.EMAILS_FROM_NAME:
+            self.EMAILS_FROM_NAME = self.PROJECT_NAME
+        return self
+
+    EMAIL_RESET_TOKEN_EXPIRE_HOURS: int = 48
+
+    @computed_field  # type: ignore[prop-decorator]
+    @property
+    def emails_enabled(self) -> bool:
+        return bool(self.SMTP_HOST and self.EMAILS_FROM_EMAIL)
+
+    EMAIL_TEST_USER: str = "test@example.com"
+    FIRST_SUPERUSER: str
+    FIRST_SUPERUSER_PASSWORD: str
+
+    def _check_default_secret(self, var_name: str, value: str | None) -> None:
+        if value == "changethis":
+            message = (
+                f'The value of {var_name} is "changethis", '
+                "for security, please change it, at least for deployments."
+            )
+            if self.ENVIRONMENT == "local":
+                warnings.warn(message, stacklevel=1)
+            else:
+                raise ValueError(message)
+
+    @model_validator(mode="after")
+    def _enforce_non_default_secrets(self) -> Self:
+        self._check_default_secret("SECRET_KEY", self.SECRET_KEY)
+        self._check_default_secret("POSTGRES_PASSWORD", self.DB_PASSWORD)
+        self._check_default_secret(
+            "FIRST_SUPERUSER_PASSWORD", self.FIRST_SUPERUSER_PASSWORD
+        )
+
+        return self
+
+    APP_LOG_CONFIG: dict = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+      "default": {
+        "()": "uvicorn.logging.DefaultFormatter",
+        "fmt": "%(levelprefix)s %(message)s",
+        "use_colors": ""
+      },
+      "access": {
+        "()": "uvicorn.logging.AccessFormatter",
+        "fmt": "%(asctime)s | %(levelprefix)s %(client_addr)s - %(status_code)s - %(request_line)s"
+      }
+    },
+    "handlers": {
+      "default": {
+        "formatter": "default",
+        "class": "logging.StreamHandler",
+        "stream": "ext://sys.stderr"
+      },
+      "access": {
+        "formatter": "access",
+        "class": "logging.StreamHandler",
+        "stream": "ext://sys.stdout"
+      }
+    },
+    "loggers": {
+      "uvicorn": {
+        "handlers": [
+          "default"
+        ],
+        "level": "INFO"
+      },
+      "uvicorn.error": {
+        "level": "INFO"
+      },
+      "uvicorn.access": {
+        "handlers": [
+          "access"
+        ],
+        "level": "INFO",
+        "propagate": False
+      }
+    }
+  }
+
+
+
+settings = Settings()  # type: ignore

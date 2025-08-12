@@ -56,11 +56,18 @@ RUN curl -fsSL https://code-server.dev/install.sh | sh \
     && code-server --install-extension Vue.volar \
     && code-server --install-extension redjue.git-commit-plugin \
     && code-server --install-extension aaron-bond.better-comments \
+    && code-server --install-extension mtxr.sqltools \
+    && code-server --install-extension mtxr.sqltools-driver-sqlite \
     && echo done
 
 # 复制 vscode 自定义到容器中
 COPY .vscode/settings.json /root/.vscode-server/data/Machine/settings.json
 COPY .vscode/settings.json /root/.local/share/code-server/Machine/settings.json
+
+# 安装 JetBrains Mono
+RUN wget https://download.jetbrains.com/fonts/JetBrainsMono-2.304.zip -O /tmp/jetbrains-mono.zip && \
+    unzip /tmp/jetbrains-mono.zip -d /usr/share/fonts/truetype/jetbrains-mono && \
+    rm /tmp/jetbrains-mono.zip && fc-cache -fv
 
 # 安装 btop
 RUN git clone https://github.com/aristocratos/btop.git /btop
@@ -74,5 +81,5 @@ ENV CNB_WELCOME_EXECUTE_COMMAND="zsh"
 RUN rm -rf ~/.cache/uv && rm -rf ~/.cache/pip
 
 # 指定字符集支持命令行输入中文（根据需要选择字符集）
-ENV LANG C.UTF-8
-ENV LANGUAGE C.UTF-8
+ENV LANG=C.UTF-8
+ENV LANGUAGE=C.UTF-8
